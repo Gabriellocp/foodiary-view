@@ -6,8 +6,10 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { DailyStats } from './components/DailyStats';
+import { DateSwitcher } from './components/DateSwitcher';
 import { HomeHeader } from './components/HomeHeader';
 import "./styles/global.css";
 
@@ -31,7 +33,16 @@ export default function App() {
       <SafeAreaProvider>
         <StatusBar style="auto" />
         <HomeHeader />
-        <Text className='font-sans-semibold'>Open up App.tsx to start working on your app!</Text>
+        <DateSwitcher />
+        <View className='mt-2'>
+          <DailyStats
+            calories={{ current: 200, goal: 1000 }}
+            carbohydrates={{ current: 200, goal: 1000 }}
+            fats={{ current: 200, goal: 1000 }}
+            proteins={{ current: 200, goal: 1000 }}
+          />
+        </View>
+        <View className='h-px bg-gray-200 mt-7'></View>
       </SafeAreaProvider>
     </View>
   );
