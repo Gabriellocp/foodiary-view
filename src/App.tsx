@@ -6,7 +6,9 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { HomeHeader } from './components/HomeHeader';
 import "./styles/global.css";
 
 SplashScreen.preventAutoHideAsync();
@@ -25,18 +27,12 @@ export default function App() {
     return null;
   }
   return (
-    <View style={styles.container}>
-      <Text className='font-sans-semibold'>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View className='flex flex-1 bg-white'>
+      <SafeAreaProvider>
+        <StatusBar style="auto" />
+        <HomeHeader />
+        <Text className='font-sans-semibold'>Open up App.tsx to start working on your app!</Text>
+      </SafeAreaProvider>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
