@@ -8,8 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { HomeHeader } from './components/HomeHeader';
-import { MealList } from './components/MealList';
+import { Home } from './screens/Home';
 import "./styles/global.css";
 
 SplashScreen.preventAutoHideAsync();
@@ -31,8 +30,7 @@ export default function App() {
     <View className='flex flex-1 bg-white'>
       <SafeAreaProvider>
         <StatusBar style="auto" />
-        <HomeHeader />
-        <MealList />
+        <Home />
       </SafeAreaProvider>
     </View>
   );
