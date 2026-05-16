@@ -16,19 +16,26 @@ export default function RootLayout() {
     const [loaded, error] = useFonts({
         HostGrotesk_400Regular, HostGrotesk_500Medium, HostGrotesk_600SemiBold, HostGrotesk_700Bold
     });
+    const isLoggedIn = false;
     useEffect(() => {
         if (loaded || error) {
             SplashScreen.hideAsync();
         }
     }, [loaded, error]);
-
     if (!loaded && !error) {
         return null;
     }
     return (
         <SafeAreaProvider>
             <StatusBar style="auto" />
-            <Stack screenOptions={{ headerShown: false }} />
+            <Stack screenOptions={{ headerShown: false }} >
+                <Stack.Protected guard={!isLoggedIn}>
+                    <Stack.Screen name="(public)" />
+                </Stack.Protected>
+                <Stack.Protected guard={isLoggedIn}>
+                    <Stack.Screen name="(private)" />
+                </Stack.Protected>
+            </Stack>
         </SafeAreaProvider>
     )
 }
