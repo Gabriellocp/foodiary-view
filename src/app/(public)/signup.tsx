@@ -2,13 +2,19 @@ import { AuthLayout } from "@/components/AuthLayout";
 import { Button } from "@/components/Button";
 import { GenderStep } from "@/components/SignUpSteps/GenderStep";
 import { GoalStep } from "@/components/SignUpSteps/GoalStep";
+import { signUpSchema } from "@/components/SignUpSteps/signUpSchema";
 import { colors } from "@/styles/colors";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react-native";
 import { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import { View } from "react-native";
 
 export default function SignUpPage() {
+    const form = useForm({
+        resolver: zodResolver(signUpSchema)
+    })
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const steps = [
         {
@@ -42,7 +48,9 @@ export default function SignUpPage() {
             subtitle={currentStep.subtitle}
         >
             <View className="flex-1 justify-between">
-                <currentStep.Component />
+                <FormProvider {...form}>
+                    <currentStep.Component />
+                </FormProvider>
                 <View className="flex-row gap-6 justify-between">
                     <Button size="icon" color="gray" onPress={handlePreviousStep}>
                         <ArrowLeftIcon size={20} color={colors.black[700]} />
