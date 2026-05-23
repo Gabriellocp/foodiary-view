@@ -24,7 +24,7 @@ export function AuthLayout({ icon, title, subtitle, children }: IAuthLayoutProps
                     <Text className="text-black-700 font-sans-semibold tracking-[-0.32px] text-[32px] text-center">
                         {title}
                     </Text>
-                    <Text className="mt-1 text-gray-700 text-base font-sans-regular">
+                    <Text className="mt-1 text-gray-700 text-base font-sans-regular text-center">
                         {subtitle}
                     </Text>
                 </View>

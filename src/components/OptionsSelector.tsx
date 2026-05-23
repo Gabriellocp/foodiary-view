@@ -33,7 +33,7 @@ export function OptionsSelector({ options, onChange, value }: IOptionSelectorPro
                         <Text>{option.icon}</Text>
                     </View>
 
-                    <View>
+                    <View className='flex-1'>
                         <Text className="text-black-700 text-base font-sans-semibold">
                             {option.title}
                         </Text>
