@@ -5,21 +5,24 @@ import {
     HostGrotesk_400Regular,
     HostGrotesk_500Medium, HostGrotesk_600SemiBold, HostGrotesk_700Bold
 } from '@expo-google-fonts/host-grotesk';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-
 SplashScreen.preventAutoHideAsync();
 
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
     return (
         <SafeAreaProvider>
-            <AuthProvider>
-                <Navigation />
-            </AuthProvider>
+            <QueryClientProvider client={queryClient}>
+                <AuthProvider>
+                    <Navigation />
+                </AuthProvider>
+            </QueryClientProvider>
         </SafeAreaProvider>
     )
 }
