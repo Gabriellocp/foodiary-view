@@ -27,6 +27,7 @@ interface IAuthContextValue {
     isLoading: boolean;
     signIn: (params: SignInParams) => Promise<void>;
     signUp: (params: SignUpParams) => Promise<void>;
+    signOut: () => Promise<void>;
 }
 
 const TOKEN_KEY = "@foodiary::token"
@@ -34,10 +35,20 @@ export const AuthContext = createContext({} as IAuthContextValue);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [token, setToken] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    useEffect(() => {
+        async function load() {
+            const token = await AsyncStorage.getItem(TOKEN_KEY);
+            setToken(token);
+            setIsLoading(false);
+        }
+        load();
+    }, [])
+
     useEffect(() => {
         async function run() {
             if (!token) {
-                return await AsyncStorage.removeItem(TOKEN_KEY);
+                return
             }
             await AsyncStorage.setItem(TOKEN_KEY, token);
 
@@ -60,16 +71,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     });
 
-    const signOut = useCallback(() => {
+    const signOut = useCallback(async () => {
         setToken(null);
+        await AsyncStorage.removeItem(TOKEN_KEY);
     }, [])
     return (
         <AuthContext.Provider value={
             {
                 isLoggedIn: !!token,
-                isLoading: false,
+                isLoading: isLoading,
                 signIn: handleSignIn,
                 signUp: handleSignUp,
+                signOut
             }
         }>
             {children}
