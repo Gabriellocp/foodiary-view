@@ -1,6 +1,7 @@
 import { AuthLayout } from "@/components/AuthLayout";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
+import { useAuth } from "@/hooks/useAuth";
 import { colors } from "@/styles/colors";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from "expo-router";
@@ -14,15 +15,20 @@ const signInSchema = z.object({
 })
 
 export default function SignInPage() {
-    const { control, handleSubmit: handleSubmitHook } = useForm({
+    const { signIn } = useAuth();
+    const { control, handleSubmit: handleSubmitHook, formState: { isSubmitting } } = useForm({
         resolver: zodResolver(signInSchema),
         defaultValues: {
             email: '',
             password: ''
         }
     })
-    const handleSubmit = handleSubmitHook(() => {
-
+    const handleSubmit = handleSubmitHook(async (data) => {
+        try {
+            await signIn(data);
+        } catch (err) {
+            console.log(err)
+        }
     })
     return (
         <AuthLayout
@@ -64,10 +70,10 @@ export default function SignInPage() {
 
                 </View>
                 <View className="flex-row gap-6">
-                    <Button size="icon" color="gray" onPress={() => router.back()} >
+                    <Button size="icon" color="gray" onPress={() => router.back()}>
                         <ArrowLeftIcon size={20} color={colors.black[700]} />
                     </Button>
-                    <Button className="flex-1" onPress={handleSubmit}>Entrar</Button>
+                    <Button className="flex-1" onPress={handleSubmit} loading={isSubmitting} disabled={isSubmitting}>Entrar</Button>
                 </View>
             </View>
         </AuthLayout>

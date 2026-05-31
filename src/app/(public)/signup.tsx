@@ -8,6 +8,7 @@ import { GoalStep } from "@/components/SignUpSteps/GoalStep";
 import { HeightStep } from "@/components/SignUpSteps/HeightStep";
 import { signUpSchema } from "@/components/SignUpSteps/signUpSchema";
 import { WeightStep } from "@/components/SignUpSteps/WeightStep";
+import { useAuth } from "@/hooks/useAuth";
 import { colors } from "@/styles/colors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
@@ -17,6 +18,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { View } from "react-native";
 
 export default function SignUpPage() {
+    const { signUp } = useAuth();
     const form = useForm({
         resolver: zodResolver(signUpSchema)
     })
@@ -78,8 +80,12 @@ export default function SignUpPage() {
         if (currentStepIndex === steps.length - 1) return;
         setCurrentStepIndex((prev) => prev + 1);
     }
-    const handleSubmit = form.handleSubmit((data) => {
-        console.log(data)
+    const handleSubmit = form.handleSubmit(async (data) => {
+        try {
+            await signUp(data)
+        } catch (err) {
+
+        }
     })
     return (
         <AuthLayout
@@ -87,7 +93,7 @@ export default function SignUpPage() {
             title={currentStep.title}
             subtitle={currentStep.subtitle}
         >
-            <View className="flex-1 justify-between">
+            <View className="flex-1 justify-between gap-2">
                 <FormProvider {...form}>
                     <currentStep.Component />
                 </FormProvider>
@@ -100,6 +106,7 @@ export default function SignUpPage() {
                             className="flex-1"
                             onPress={handleSubmit}
                             loading={form.formState.isSubmitting}
+                            disabled={form.formState.isSubmitting}
                         >
                             Criar conta
                         </Button>
