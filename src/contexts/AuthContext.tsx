@@ -1,6 +1,6 @@
 import { httpClient } from "@/services/httpClient";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createContext, useCallback, useEffect, useState } from "react";
 type SignInParams = {
     email: string;
@@ -21,8 +21,18 @@ type SignUpParams = {
 
 }
 
+type User = {
+    name: string;
+    id: string;
+    email: string;
+    calories: number;
+    proteins: number;
+    carbohydrates: number;
+    fats: number;
+}
 
 interface IAuthContextValue {
+    user: User | undefined;
     isLoggedIn: boolean;
     isLoading: boolean;
     signIn: (params: SignInParams) => Promise<void>;
@@ -51,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 return
             }
             await AsyncStorage.setItem(TOKEN_KEY, token);
-
+            httpClient.defaults.headers.common.Authorization = `Bearer ${token}`
         }
         run();
 
@@ -70,6 +80,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setToken(APIToken);
         }
     });
+    const { data: user } = useQuery({
+        enabled: !!token,
+        queryKey: ['user', 'me'],
+        queryFn: async () => {
+            const { data } = await httpClient.get<{ user: User }>('/me');
+            return data.user;
+        }
+    })
 
     const signOut = useCallback(async () => {
         setToken(null);
@@ -78,6 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return (
         <AuthContext.Provider value={
             {
+                user,
                 isLoggedIn: !!token,
                 isLoading: isLoading,
                 signIn: handleSignIn,
