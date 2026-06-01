@@ -80,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setToken(APIToken);
         }
     });
-    const { data: user } = useQuery({
+    const { data: user, isFetching } = useQuery({
         enabled: !!token,
         queryKey: ['user', 'me'],
         queryFn: async () => {
@@ -97,8 +97,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         <AuthContext.Provider value={
             {
                 user,
-                isLoggedIn: !!token,
-                isLoading: isLoading,
+                isLoggedIn: !!user,
+                isLoading: isLoading || isFetching,
                 signIn: handleSignIn,
                 signUp: handleSignUp,
                 signOut
