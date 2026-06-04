@@ -58,10 +58,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         async function run() {
             if (!token) {
+                httpClient.defaults.headers.common.Authorization = null;
                 return
             }
             await AsyncStorage.setItem(TOKEN_KEY, token);
-            httpClient.defaults.headers.common.Authorization = `Bearer ${token}`
+            httpClient.defaults.headers.common.Authorization = `Bearer ${token}`;
         }
         run();
 
@@ -97,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         <AuthContext.Provider value={
             {
                 user,
-                isLoggedIn: !!user,
+                isLoggedIn: !!user && !!token,
                 isLoading: isLoading || isFetching,
                 signIn: handleSignIn,
                 signUp: handleSignUp,
