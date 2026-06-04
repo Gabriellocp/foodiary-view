@@ -6,6 +6,7 @@ import { Image, Modal, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 
+import { useCreateMeal } from '@/hooks/useCreateMeal';
 import { colors } from '../styles/colors';
 import { Button } from './Button';
 
@@ -20,6 +21,8 @@ export function CameraModal({ onClose, open }: ICameraModalProps) {
 
     const cameraRef = useRef<CameraView>(null);
 
+
+    const { createMeal, isLoading } = useCreateMeal({ type: 'image' });
 
 
     function handleCloseModal() {
@@ -110,8 +113,8 @@ export function CameraModal({ onClose, open }: ICameraModalProps) {
                                     </Button>
                                     <Button
                                         size="icon"
-                                    // onPress={() => createMeal(photoUri)}
-                                    // loading={isLoading}
+                                        onPress={() => createMeal(photoUri)}
+                                        loading={isLoading}
                                     >
                                         <CheckIcon size={20} color={colors.black[700]} />
                                     </Button>
