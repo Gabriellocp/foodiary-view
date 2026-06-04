@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import { Alert, Modal, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
+import { httpClient } from '@/services/httpClient';
+import { useMutation } from '@tanstack/react-query';
 import { colors } from '../styles/colors';
 import { cn } from '../utils/cn';
 import { Button } from './Button';
@@ -38,6 +40,26 @@ export function AudioModal({ onClose, open }: IAudioModalProps) {
         })();
     }, []);
 
+    const { mutateAsync: createMeal, isPending: isLoading } = useMutation({
+        mutationKey: ['meal', 'create'],
+        mutationFn: async (uri: string) => {
+            const { data } = await httpClient.post('/meals', {
+                fileType: 'audio/m4a'
+            });
+
+            const { presignedUrl: uploadUrl } = data;
+            const response = await fetch(uri);
+            const file = await response.blob();
+            await fetch(uploadUrl, {
+                method: 'PUT',
+                body: file,
+                headers: {
+                    'Content-Type': 'audio/m4a'
+                }
+            });
+        }
+    })
+
     async function handleStartRecording() {
         await audioRecorder.prepareToRecordAsync();
         audioRecorder.record();
@@ -56,6 +78,7 @@ export function AudioModal({ onClose, open }: IAudioModalProps) {
         setAudioUri(null);
         onClose();
     }
+
 
     return (
         <Modal
@@ -144,8 +167,8 @@ export function AudioModal({ onClose, open }: IAudioModalProps) {
                                 )}
                                 <Button
                                     size="icon"
-                                // onPress={() => createMeal(audioUri)}
-                                // loading={isLoading}
+                                    onPress={() => createMeal(audioUri)}
+                                    loading={isLoading}
                                 >
                                     <CheckIcon size={20} color={colors.black[700]} />
                                 </Button>
