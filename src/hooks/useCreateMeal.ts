@@ -2,15 +2,21 @@ import { httpClient } from "@/services/httpClient";
 import { useMutation } from "@tanstack/react-query";
 
 interface MealType {
-    type: 'audio' | 'image'
+    type: 'audio' | 'image',
+    onSuccess?: (data: CreateMealResponse) => void
 }
 
-export function useCreateMeal({ type }: MealType) {
+type CreateMealResponse = {
+    presignedUrl: string;
+    mealId: string;
+}
+
+export function useCreateMeal({ type, onSuccess }: MealType) {
 
     const { mutateAsync: createMeal, isPending: isLoading } = useMutation({
         mutationKey: ['meal', 'create'],
         mutationFn: async (uri: string) => {
-            const { data } = await httpClient.post('/meals', {
+            const { data } = await httpClient.post<CreateMealResponse>('/meals', {
                 fileType: type === 'audio' ? 'audio/m4a' : 'image/jpeg'
             });
 
@@ -24,6 +30,10 @@ export function useCreateMeal({ type }: MealType) {
                     'Content-Type': type === 'audio' ? 'audio/m4a' : 'image/jpg'
                 }
             });
+            return data;
+        },
+        onSuccess: (data) => {
+            onSuccess?.(data);
         }
     })
     return {

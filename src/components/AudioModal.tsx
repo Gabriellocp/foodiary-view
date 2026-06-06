@@ -6,6 +6,7 @@ import { Alert, Modal, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import { useCreateMeal } from '@/hooks/useCreateMeal';
+import { router } from 'expo-router';
 import { colors } from '../styles/colors';
 import { cn } from '../utils/cn';
 import { Button } from './Button';
@@ -39,7 +40,12 @@ export function AudioModal({ onClose, open }: IAudioModalProps) {
         })();
     }, []);
 
-    const { createMeal, isLoading } = useCreateMeal({ type: 'audio' })
+    const { createMeal, isLoading } = useCreateMeal({
+        type: 'audio', onSuccess: ({ mealId }) => {
+            handleCloseModal();
+            router.push(`/meal/${mealId}`)
+        }
+    })
 
     async function handleStartRecording() {
         await audioRecorder.prepareToRecordAsync();
