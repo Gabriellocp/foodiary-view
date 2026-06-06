@@ -1,3 +1,4 @@
+import { queryKeys } from "@/domain/keys";
 import { httpClient } from "@/services/httpClient";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -83,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
     const { data: user, isFetching } = useQuery({
         enabled: !!token,
-        queryKey: ['user', 'me'],
+        queryKey: queryKeys.user.me,
         queryFn: async () => {
             const { data } = await httpClient.get<{ user: User }>('/me');
             return data.user;

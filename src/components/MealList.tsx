@@ -1,34 +1,28 @@
+import { Meal } from "@/domain/entities";
+import { queryKeys } from "@/domain/keys";
 import { httpClient } from "@/services/httpClient";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MealCard } from "./MealCard";
 import { MealListHeader } from "./MealListHeader";
-type Food = {
-    name: string,
-    quantity: number,
-    calories: number,
-    proteins: number,
-    carbohydrates: number,
-    fats: number
-}
-type Meal = {
-    name: string;
-    id: string;
-    icon: string;
-    foods: Food[];
-    createdAt: Date;
-}
 
 export function MealList() {
     const { bottom } = useSafeAreaInsets();
-
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const dateStr = useMemo(() => {
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`
+    }, [currentDate])
     const { data: meals } = useQuery({
-        queryKey: ['meals'],
+        queryKey: queryKeys.meal.list,
         queryFn: async () => {
             const { data } = await httpClient.get<{ meals: Meal[] }>('/meals', {
                 params: {
-                    date: '2026-05-31'
+                    date: dateStr
                 }
             });
             return data.meals;
@@ -41,7 +35,7 @@ export function MealList() {
             ListHeaderComponent={MealListHeader}
             data={meals}
             ListEmptyComponent={<Text className="text-xl text-gray-700 text-center">Nenhuma refeição cadastrada</Text>}
-            keyExtractor={(meal) => String(meal)}
+            keyExtractor={(meal) => meal.id}
             renderItem={({ item: meal }) => {
                 return <View className="mx-5">
                     <MealCard id={meal.id} name={meal.name} />
