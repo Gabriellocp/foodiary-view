@@ -3,11 +3,19 @@ import { Text, View } from "react-native";
 import { DailyStats } from "./DailyStats";
 import { DateSwitcher } from "./DateSwitcher";
 
-export function MealListHeader() {
+
+interface IMealListHeaderProps {
+    currentDate: Date;
+    onPrevious: () => void;
+    onNext: () => void;
+}
+
+
+export function MealListHeader({ currentDate, onNext, onPrevious }: IMealListHeaderProps) {
     const { user } = useAuth();
     return (
         <>
-            <DateSwitcher />
+            <DateSwitcher currentDate={currentDate} onNext={onNext} onPrevious={onPrevious} />
             <View className='mt-2'>
                 <DailyStats
                     calories={{ current: 0, goal: user?.calories ?? 0 }}

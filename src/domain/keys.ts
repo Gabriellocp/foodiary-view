@@ -1,8 +1,9 @@
 export const queryKeys = {
     meal: {
-        get: ['meal', 'get'],
+        get: (id: string) => ['meal', 'get', id],
         create: ['meal', 'create'],
-        list: ['meal', 'list']
+        list: ['meal', 'list'],
+        listWithFilers: (filters: string[]) => ['meal', 'list', ...filters]
     },
     user: {
         me: ['user', 'me']

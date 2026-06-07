@@ -10,7 +10,8 @@ import { ActivityIndicator, Text, View } from "react-native";
 export default function MealPage() {
     const { mealId } = useLocalSearchParams();
     const { data: meal, isFetching: isLoading } = useQuery({
-        queryKey: queryKeys.meal.get,
+        queryKey: queryKeys.meal.get(mealId as string),
+        staleTime: 60_000,
         queryFn: async () => {
             const { data } = await httpClient.get<{ meal: Meal }>(`/meals/${mealId}`);
             return data.meal;

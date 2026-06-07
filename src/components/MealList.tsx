@@ -18,7 +18,8 @@ export function MealList() {
         return `${year}-${month}-${day}`
     }, [currentDate])
     const { data: meals } = useQuery({
-        queryKey: queryKeys.meal.list,
+        queryKey: queryKeys.meal.listWithFilers([currentDate.toString()]),
+        staleTime: Infinity,
         queryFn: async () => {
             const { data } = await httpClient.get<{ meals: Meal[] }>('/meals', {
                 params: {
@@ -28,11 +29,31 @@ export function MealList() {
             return data.meals;
         }
     })
+
+    function handlePreviousDate() {
+        setCurrentDate((date) => {
+            const newDate = new Date(date);
+            newDate.setDate(newDate.getDate() - 1);
+            return newDate;
+        })
+    }
+
+    function handleNextDate() {
+        setCurrentDate((date) => {
+            const newDate = new Date(date);
+            newDate.setDate(newDate.getDate() + 1);
+            return newDate;
+        })
+    }
     return (
         <FlatList
             // ItemSeparatorComponent={() => <View className="h-8"></View>}
             contentContainerStyle={{ gap: 32, paddingBottom: 80 + bottom + 16 }}
-            ListHeaderComponent={MealListHeader}
+            ListHeaderComponent={<MealListHeader
+                currentDate={currentDate}
+                onNext={handleNextDate}
+                onPrevious={handlePreviousDate}
+            />}
             data={meals}
             ListEmptyComponent={<Text className="text-xl text-gray-700 text-center">Nenhuma refeição cadastrada</Text>}
             keyExtractor={(meal) => meal.id}
