@@ -21,7 +21,7 @@ export function MealList() {
         queryKey: queryKeys.meal.listWithFilers([currentDate.toString()]),
         staleTime: Infinity,
         queryFn: async () => {
-            const { data } = await httpClient.get<{ meals: Meal[] }>('/meals', {
+            const { data } = await httpClient.get<{ meals: (Omit<Meal, 'createdAt'> & { createdAt: string })[] }>('/meals', {
                 params: {
                     date: dateStr
                 }
@@ -59,7 +59,7 @@ export function MealList() {
             keyExtractor={(meal) => meal.id}
             renderItem={({ item: meal }) => {
                 return <View className="mx-5">
-                    <MealCard id={meal.id} name={meal.name} />
+                    <MealCard {...meal} createdAt={new Date(meal.createdAt)} />
                 </View>
             }} >
         </FlatList>
