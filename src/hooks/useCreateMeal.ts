@@ -1,5 +1,5 @@
 import { httpClient } from "@/services/httpClient";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface MealType {
     type: 'audio' | 'image',
@@ -12,7 +12,7 @@ type CreateMealResponse = {
 }
 
 export function useCreateMeal({ type, onSuccess }: MealType) {
-
+    const queryClient = useQueryClient();
     const { mutateAsync: createMeal, isPending: isLoading } = useMutation({
         mutationKey: ['meal', 'create'],
         mutationFn: async (uri: string) => {
@@ -34,6 +34,7 @@ export function useCreateMeal({ type, onSuccess }: MealType) {
         },
         onSuccess: (data) => {
             onSuccess?.(data);
+            queryClient.refetchQueries({ queryKey: ['meal', 'list'] });
         }
     })
     return {

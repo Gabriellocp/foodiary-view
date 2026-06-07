@@ -2,7 +2,8 @@ import { Meal } from "@/domain/entities";
 import { queryKeys } from "@/domain/keys";
 import { httpClient } from "@/services/httpClient";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useMemo, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MealCard } from "./MealCard";
@@ -17,9 +18,9 @@ export function MealList() {
         const day = String(currentDate.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`
     }, [currentDate])
-    const { data: meals } = useQuery({
-        queryKey: queryKeys.meal.listWithFilers([currentDate.toString()]),
-        staleTime: Infinity,
+    const { data: meals, refetch } = useQuery({
+        queryKey: queryKeys.meal.listWithFilers([currentDate.toISOString()]),
+        staleTime: 3_000,
         queryFn: async () => {
             const { data } = await httpClient.get<{ meals: (Omit<Meal, 'createdAt'> & { createdAt: string })[] }>('/meals', {
                 params: {
@@ -29,7 +30,9 @@ export function MealList() {
             return data.meals;
         }
     })
-
+    useFocusEffect(useCallback(() => {
+        refetch();
+    }, []))
     function handlePreviousDate() {
         setCurrentDate((date) => {
             const newDate = new Date(date);
@@ -53,6 +56,7 @@ export function MealList() {
                 currentDate={currentDate}
                 onNext={handleNextDate}
                 onPrevious={handlePreviousDate}
+                meals={meals?.map(meal => ({ ...meal, createdAt: new Date(meal.createdAt) })) ?? []}
             />}
             data={meals}
             ListEmptyComponent={<Text className="text-xl text-gray-700 text-center">Nenhuma refeição cadastrada</Text>}
