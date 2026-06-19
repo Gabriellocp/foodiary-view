@@ -16,5 +16,18 @@ module.exports = {
       colors: colors
     }
   },
+  // safelist: [
+  //   'bg-yellow-500',
+  //   'bg-teal-500',
+  //   'bg-orange-500',
+  //   'text-yellow-500',
+  //   'text-teal-500',
+  //   'text-orange-500',
+  // ],
+  // safelist: [
+  //   {
+  //     pattern: /(bg|text)-(yellow|teal|orange)-500/,
+  //   },
+  // ],
   plugins: [],
 }
