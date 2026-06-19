@@ -1,3 +1,4 @@
+import { queryKeys } from "@/domain/keys";
 import { httpClient } from "@/services/httpClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -34,7 +35,7 @@ export function useCreateMeal({ type, onSuccess }: MealType) {
         },
         onSuccess: (data) => {
             onSuccess?.(data);
-            queryClient.refetchQueries({ queryKey: ['meal', 'list'] });
+            queryClient.refetchQueries({ queryKey: queryKeys.meal.list });
         }
     })
     return {
