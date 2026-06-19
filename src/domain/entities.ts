@@ -4,7 +4,8 @@ export type Food = {
     calories: number,
     proteins: number,
     carbohydrates: number,
-    fats: number
+    fats: number,
+    unity: string
 }
 export type Meal = {
     name: string;
